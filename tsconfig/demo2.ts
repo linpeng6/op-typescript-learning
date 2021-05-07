@@ -1,0 +1,1 @@
+// const ppp: string = 'ppp'

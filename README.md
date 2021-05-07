@@ -202,3 +202,150 @@ class Dog extends Animal {
     }
 }
 ```
+
+## 11.tsconfig.json文件
+
+1. 生成tsconfig.json文件
+tsc --init
+其实它就是用来配置如何对ts文件进行编译的，我们都叫它typescript的编译配置文件。
+
+2. 让tsconfig.json文件生效
+使用tsc demo.ts进行编译，编译后会得到demo.js文件。
+但是tsconfig.json这个编译配置文件并没有生效。使用tsc命令才会起作用。
+
+如果根目录下有多个ts文件，却只想编译一个，有三种解决办法。
+* 使用include配置
+include属性是用来指定要编译的文件的，比如现在我们只编译demo.ts文件，而不编译demo2.ts文件，就可以这样写。
+注意配置文件不支持单引号，所以里边都要使用双引号。
+```
+{
+    "include":["demo.ts"],
+    "compilerOptions":{
+        //......
+    }
+}
+```
+* 使用exclude配置
+include是包含的意思，exclude是不包含
+```
+{
+    "exclude":["demo2.ts"],
+    "compilerOptions":{
+        //......
+    }
+}
+```
+* 使用 files 配置
+```
+{
+    "files":["demo.ts"],
+    "compilerOptions":{
+        //......
+    }
+}
+```
+
+3. compilerOptions配置项
+removeComments : 告诉TypeScript对编译出来的js文件是否显示注释（注解）。
+strict : true,就代表编译和书写规范要按照TypeScript最严格的规范来写。
+noImplicitAny : 允许你的注解类型 any 不用特意表明。
+strictNullChecks : 设置为false,不强制检查 NULL 类型
+
+outDir,rootDir指定ts文件位置
+{
+    "outDir": "./build" ,
+    "rootDir": "./src" ,
+}
+
+配置项详解https://www.tslang.cn/docs/handbook/compiler-options.html
+
+
+## 12.联合类型和类型守护
+
+所谓联合类型，可以认为一个变量可能有两种或两种以上的类型
+```typescript
+interface Chinese {
+    skin : boolean;
+    say: () => {};
+}
+  
+interface American {
+    skin : boolean;
+    skill: () => {};
+}
+  
+function judgeWho(animal: Chinese | American) {
+    animal.say()  //报错,judgeWho不能准确的判断联合类型具体的实例是什么。
+}
+```
+
+类型守护
+* 类型断言
+类型断言就是通过断言的方式确定传递过来的准确值
+```typescript
+function judgeWho(animal: Chinese | American) {
+    if (animal.skin) {
+        (animal as Chinese).say();
+    }else{
+        (animal as American).skill();
+    }
+}
+```
+* in语法
+```typescript
+function judgeWho(animal: Chinese | American) {
+    if ("say" in animal) {
+        animal.say();
+    }else{
+        animal.skill();
+    }
+}
+```
+
+* typeof语法
+```typescript
+function add(first: string | number, second: string | number) {
+    if (typeof first === "string" || typeof second === "string") {
+      return `${first}${second}`;
+    }
+    return first + second;
+}
+```
+
+* instanceof 语法
+类型保护的是一个对象，这时候就可以使用instanceof语法。
+```typescript
+class NumberObj {
+    count: number;
+}
+function addObj(first: object | NumberObj, second: object | NumberObj) {
+    //return first.count + second.count; 报错
+    if (first instanceof NumberObj && second instanceof NumberObj) {
+        return first.count + second.count;
+    }
+    return 0;
+}
+```
+
+
+## 13.enum枚举类型
+```typescript
+enum Status {
+    BEIJING,
+    SHANGHAI,
+    FUZHOU,
+}
+  
+function goTo(status: any) {
+    if (status === Status.BEIJING) {
+        return "beijing";
+    } else if (status === Status.SHANGHAI) {
+        return "shanghai";
+    } else if (status === Status.FUZHOU) {
+        return "fuzhou";
+    }
+}
+const result = goTo(Status.BEIJING);
+// const result = goTo(1);   枚举默认从0开始
+console.log(`我要去${result}`);
+```
