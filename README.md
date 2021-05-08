@@ -349,3 +349,15 @@ const result = goTo(Status.BEIJING);
 // const result = goTo(1);   枚举默认从0开始
 console.log(`我要去${result}`);
 ```
+
+## 14.泛型
+```typescript
+function join<T>(first :T, second :T) {
+    return `${first}${second}`;
+
+}
+join<string>('op','1');
+```
+
+## 15.命名空间namespace
+namespace Components{}
